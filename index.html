@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>G11 Revision v4.2 - Science Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        .hidden-chat { display: none !important; }
+        #chat-ui { display: none; position: fixed; inset: 0; background: white; z-index: 100; }
+        .no-select { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+    </style>
+</head>
+<body class="bg-gray-50 no-select">
+
+    <div id="main-ui" class="p-6">
+        <nav class="border-b pb-4 mb-4 flex justify-between">
+            <h1 class="font-bold text-gray-700">Exam-Prep LK</h1>
+            <span class="text-xs text-green-600">● Server Online</span>
+        </nav>
+        <div class="space-y-4">
+            <div class="p-4 bg-white border rounded shadow-sm">
+                <h2 class="font-bold text-sm">Physics Unit 08: Atomic Energy</h2>
+                <p class="text-xs text-gray-500 mt-1">Mass–energy equivalence is the principle that anything having mass has an equivalent amount of energy.</p>
+                <p id="trigger" class="mt-4 p-3 bg-gray-100 text-center font-serif text-xl cursor-pointer active:bg-gray-200">E = mc²</p>
+            </div>
+            <div class="p-4 bg-white border rounded shadow-sm opacity-50">
+                <h2 class="font-bold text-sm italic">2026 Biology Predictions (Private)</h2>
+            </div>
+        </div>
+    </div>
+
+    <div id="pin-modal" class="hidden fixed inset-0 bg-white flex flex-col items-center justify-center z-[110]">
+        <p class="text-gray-400 text-sm mb-4">Enter Document Access Key</p>
+        <input type="password" id="pin-input" maxlength="4" class="w-24 text-center border-b-2 border-blue-500 outline-none text-2xl tracking-widest">
+    </div>
+
+    <div id="chat-ui" class="flex flex-col">
+        <header class="p-4 border-b bg-gray-50 flex justify-between items-center">
+            <span class="text-xs font-bold text-gray-400 uppercase">Secure Channel</span>
+            <button onclick="vanish()" class="text-red-500 text-xs">EXIT</button>
+        </header>
+        <div id="messages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#f0f2f5]"></div>
+        <div class="p-3 border-t bg-white flex gap-2">
+            <input type="text" id="msg-field" placeholder="Type here..." class="flex-1 border rounded-full px-4 py-2 text-sm outline-none">
+            <button onclick="send()" class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center">➔</button>
+        </div>
+    </div>
+
+    <script>
+        // 🔒 SECURITY CONFIG
+        const HASHED_PIN = "81dc9bdb52d04dc20036dbd8313ed055"; // This is '1234' hashed.
+        const WEBHOOK_URL = "https://your-dokploy-app.com/api/chat";
+        let lockTimer;
+        let pressTimer;
+
+        // 🔘 TRIGGER LOGIC
+        const trigger = document.getElementById('trigger');
+        trigger.addEventListener('touchstart', () => {
+            pressTimer = setTimeout(() => {
+                document.getElementById('pin-modal').classList.remove('hidden');
+            }, 4000);
+        });
+        trigger.addEventListener('touchend', () => clearTimeout(pressTimer));
+
+        // 🔑 PIN VERIFICATION
+        document.getElementById('pin-input').addEventListener('input', (e) => {
+            if (CryptoJS.MD5(e.target.value).toString() === HASHED_PIN) {
+                document.getElementById('pin-modal').classList.add('hidden');
+                document.getElementById('chat-ui').style.display = 'flex';
+                startInactivityTimer();
+            }
+        });
+
+        // ⏱️ 20-SECOND AUTO-LOCK
+        function startInactivityTimer() {
+            clearTimeout(lockTimer);
+            lockTimer = setTimeout(vanish, 20000);
+        }
+        window.addEventListener('touchstart', startInactivityTimer);
+
+        // 🚫 INSTANT VANISH (Background/Lock)
+        document.addEventListener('visibilitychange', () => { if(document.hidden) vanish(); });
+
+        function vanish() {
+            document.getElementById('chat-ui').style.display = 'none';
+            document.getElementById('pin-modal').classList.add('hidden');
+            document.getElementById('pin-input').value = "";
+            location.hash = "home"; // History trick
+        }
+
+        // 📨 WEBHOOK SEND
+        async function send() {
+            const val = document.getElementById('msg-field').value;
+            if(!val) return;
+            
+            // Add to UI immediately
+            const msgDiv = document.createElement('div');
+            msgDiv.className = "bg-white p-2 rounded shadow-sm text-sm self-end max-w-[80%] ml-auto";
+            msgDiv.innerText = val;
+            document.getElementById('messages').appendChild(msgDiv);
+            document.getElementById('msg-field').value = "";
+
+            // Send to Backend
+            await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: val, timestamp: new Date() })
+            });
+        }
+    </script>
+</body>
+</html>
