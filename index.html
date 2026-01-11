@@ -2,111 +2,141 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>G11 Revision v4.2 - Science Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Grade 11 Revision Portal - Science & ICT</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
-        .hidden-chat { display: none !important; }
-        #chat-ui { display: none; position: fixed; inset: 0; background: white; z-index: 100; }
+        #secret-chat { display: none; position: fixed; inset: 0; background: white; z-index: 1000; }
         .no-select { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+        .theory-card { background: white; border: 1px solid #e5e7eb; padding: 1.25rem; border-radius: 0.5rem; margin-bottom: 1rem; }
     </style>
 </head>
-<body class="bg-gray-50 no-select">
+<body class="bg-slate-50 text-slate-900 no-select font-sans">
 
-    <div id="main-ui" class="p-6">
-        <nav class="border-b pb-4 mb-4 flex justify-between">
-            <h1 class="font-bold text-gray-700">Exam-Prep LK</h1>
-            <span class="text-xs text-green-600">● Server Online</span>
+    <div id="portal-view" class="min-h-screen pb-20">
+        <nav class="bg-blue-800 text-white p-4 shadow-md">
+            <h1 class="text-lg font-bold">O/L Mastery: Grade 11</h1>
+            <p class="text-xs opacity-80">Online Theory & Revision Notes</p>
         </nav>
-        <div class="space-y-4">
-            <div class="p-4 bg-white border rounded shadow-sm">
-                <h2 class="font-bold text-sm">Physics Unit 08: Atomic Energy</h2>
-                <p class="text-xs text-gray-500 mt-1">Mass–energy equivalence is the principle that anything having mass has an equivalent amount of energy.</p>
-                <p id="trigger" class="mt-4 p-3 bg-gray-100 text-center font-serif text-xl cursor-pointer active:bg-gray-200">E = mc²</p>
-            </div>
-            <div class="p-4 bg-white border rounded shadow-sm opacity-50">
-                <h2 class="font-bold text-sm italic">2026 Biology Predictions (Private)</h2>
-            </div>
+
+        <main class="p-4 max-w-2xl mx-auto">
+            <section class="mb-6">
+                <h2 class="text-blue-800 font-bold border-b-2 border-blue-200 mb-3 pb-1">Science - Physics Unit</h2>
+                
+                <div class="theory-card shadow-sm">
+                    <h3 class="font-bold text-sm text-slate-700">1. Newton's Second Law</h3>
+                    <p class="text-xs text-slate-600 mt-2 italic leading-relaxed">
+                        "The rate of change of momentum of a body is directly proportional to the unbalanced force acting on it."
+                    </p>
+                    <div class="bg-slate-100 p-2 mt-2 rounded font-serif text-center text-blue-900">
+                        F = ma
+                    </div>
+                </div>
+
+                <div class="theory-card shadow-sm">
+                    <h3 class="font-bold text-sm text-slate-700">2. Electrical Energy ($E$)</h3>
+                    <p class="text-xs text-slate-600 mt-2">To calculate energy consumed by appliances:</p>
+                    <div class="grid grid-cols-2 gap-2 mt-2 text-center text-[10px] font-mono">
+                        <div class="bg-blue-50 p-1 border border-blue-100 rounded">E = VIt</div>
+                        <div class="bg-blue-50 p-1 border border-blue-100 rounded">E = I²Rt</div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-green-700 font-bold border-b-2 border-green-200 mb-3 pb-1">ICT - Networking</h2>
+                <div class="theory-card shadow-sm border-l-4 border-l-green-500">
+                    <h3 class="font-bold text-sm text-slate-700">IP Addressing</h3>
+                    <p class="text-[11px] text-slate-500 mt-1">IPv4 uses 32-bit addresses. Example: <code class="bg-gray-100 px-1">192.168.1.1</code></p>
+                </div>
+            </section>
+        </main>
+
+        <footer class="mt-10 p-6 text-center text-slate-400 text-[10px]">
+            <p>Copyright © 2026 O/L Revision Portal. All Rights Reserved<span onclick="triggerPin()" class="cursor-pointer text-slate-300">.</span></p>
+        </footer>
+    </div>
+
+    <div id="pin-screen" class="hidden fixed inset-0 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center z-[1100]">
+        <div class="w-64 p-6 bg-white border rounded-xl shadow-2xl text-center">
+            <h2 class="text-sm font-bold text-slate-400 mb-4 uppercase tracking-tighter">Enter Auth Key</h2>
+            <input type="password" id="pin-input" maxlength="4" placeholder="••••" class="w-full text-center text-3xl tracking-widest border-b-2 border-blue-500 outline-none pb-2">
         </div>
     </div>
 
-    <div id="pin-modal" class="hidden fixed inset-0 bg-white flex flex-col items-center justify-center z-[110]">
-        <p class="text-gray-400 text-sm mb-4">Enter Document Access Key</p>
-        <input type="password" id="pin-input" maxlength="4" class="w-24 text-center border-b-2 border-blue-500 outline-none text-2xl tracking-widest">
-    </div>
-
-    <div id="chat-ui" class="flex flex-col">
-        <header class="p-4 border-b bg-gray-50 flex justify-between items-center">
-            <span class="text-xs font-bold text-gray-400 uppercase">Secure Channel</span>
-            <button onclick="vanish()" class="text-red-500 text-xs">EXIT</button>
+    <div id="secret-chat" class="flex flex-col h-screen">
+        <header class="p-4 border-b bg-slate-50 flex justify-between items-center shadow-sm">
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span class="text-xs font-bold text-slate-500 uppercase">Secure Link</span>
+            </div>
+            <button onclick="vanish()" class="text-slate-400 hover:text-red-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
         </header>
-        <div id="messages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#f0f2f5]"></div>
-        <div class="p-3 border-t bg-white flex gap-2">
-            <input type="text" id="msg-field" placeholder="Type here..." class="flex-1 border rounded-full px-4 py-2 text-sm outline-none">
-            <button onclick="send()" class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center">➔</button>
+        
+        <div id="msg-container" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-100/50">
+            </div>
+
+        <div class="p-3 border-t bg-white flex items-center gap-2">
+            <input type="text" id="input-field" placeholder="Share something..." class="flex-1 bg-slate-50 border rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-blue-400 outline-none transition-all">
+            <button onclick="handleSend()" class="bg-blue-600 text-white p-2 rounded-full shadow-lg active:scale-90 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+            </button>
         </div>
     </div>
 
     <script>
-        // 🔒 SECURITY CONFIG
-        const HASHED_PIN = "81dc9bdb52d04dc20036dbd8313ed055"; // This is '1234' hashed.
-        const WEBHOOK_URL = "https://your-dokploy-app.com/api/chat";
+        const PIN_HASH = "81dc9bdb52d04dc20036dbd8313ed055"; // PIN is '1234'
         let lockTimer;
-        let pressTimer;
 
-        // 🔘 TRIGGER LOGIC
-        const trigger = document.getElementById('trigger');
-        trigger.addEventListener('touchstart', () => {
-            pressTimer = setTimeout(() => {
-                document.getElementById('pin-modal').classList.remove('hidden');
-            }, 4000);
-        });
-        trigger.addEventListener('touchend', () => clearTimeout(pressTimer));
+        function triggerPin() {
+            document.getElementById('pin-screen').classList.remove('hidden');
+            document.getElementById('pin-input').focus();
+        }
 
-        // 🔑 PIN VERIFICATION
         document.getElementById('pin-input').addEventListener('input', (e) => {
-            if (CryptoJS.MD5(e.target.value).toString() === HASHED_PIN) {
-                document.getElementById('pin-modal').classList.add('hidden');
-                document.getElementById('chat-ui').style.display = 'flex';
-                startInactivityTimer();
+            if (CryptoJS.MD5(e.target.value).toString() === PIN_HASH) {
+                document.getElementById('pin-screen').classList.add('hidden');
+                document.getElementById('secret-chat').style.display = 'flex';
+                resetLockTimer();
             }
         });
 
-        // ⏱️ 20-SECOND AUTO-LOCK
-        function startInactivityTimer() {
+        function resetLockTimer() {
             clearTimeout(lockTimer);
-            lockTimer = setTimeout(vanish, 20000);
+            if (document.getElementById('secret-chat').style.display === 'flex') {
+                lockTimer = setTimeout(vanish, 20000); // 20s lock
+            }
         }
-        window.addEventListener('touchstart', startInactivityTimer);
-
-        // 🚫 INSTANT VANISH (Background/Lock)
-        document.addEventListener('visibilitychange', () => { if(document.hidden) vanish(); });
 
         function vanish() {
-            document.getElementById('chat-ui').style.display = 'none';
-            document.getElementById('pin-modal').classList.add('hidden');
+            document.getElementById('secret-chat').style.display = 'none';
+            document.getElementById('pin-screen').classList.add('hidden');
             document.getElementById('pin-input').value = "";
-            location.hash = "home"; // History trick
         }
 
-        // 📨 WEBHOOK SEND
-        async function send() {
-            const val = document.getElementById('msg-field').value;
-            if(!val) return;
-            
-            // Add to UI immediately
-            const msgDiv = document.createElement('div');
-            msgDiv.className = "bg-white p-2 rounded shadow-sm text-sm self-end max-w-[80%] ml-auto";
-            msgDiv.innerText = val;
-            document.getElementById('messages').appendChild(msgDiv);
-            document.getElementById('msg-field').value = "";
+        window.addEventListener('touchstart', resetLockTimer);
+        document.addEventListener('visibilitychange', () => { if(document.hidden) vanish(); });
 
-            // Send to Backend
-            await fetch(WEBHOOK_URL, {
+        async function handleSend() {
+            const text = document.getElementById('input-field').value;
+            if(!text) return;
+
+            const box = document.getElementById('msg-container');
+            const msg = document.createElement('div');
+            msg.className = "ml-auto bg-blue-600 text-white p-3 rounded-2xl rounded-tr-none text-sm max-w-[85%] shadow-sm";
+            msg.innerText = text;
+            box.appendChild(msg);
+            box.scrollTop = box.scrollHeight;
+            document.getElementById('input-field').value = "";
+
+            // WEBHOOK CALL
+            await fetch('https://your-dokploy-url.com/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: val, timestamp: new Date() })
+                body: JSON.stringify({ message: text, time: new Date() })
             });
         }
     </script>
